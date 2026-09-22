@@ -1,0 +1,16 @@
+Install python windows 64bit
+open project run
+ .venv\Scripts\activate
+run
+ $env:OPENBLAS_NUM_THREADS="1"
+ $env:OMP_NUM_THREADS="1"
+ $env:MKL_NUM_THREADS="1"
+
+ python -m pip install Flask
+
+  python -m pip install pandas
+
+    python -m pip install numpy
+
+    python -m pip install scikit-learn
+python -m pip install openpyxl

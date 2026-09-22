@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Insights & Forecast</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <div class="page">
+    <div class="card upload-card">
+
+      ```
+      <h1>📊 Sales Insights &amp; Forecast</h1>
+
+      <p class="subtitle">
+        Upload an Excel file with your Sales / Forecast data to get instant
+        insights, charts, and a 6-month sales prediction.
+      </p>
+
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class="flash">
+        {% for m in messages %}
+        <p>⚠️ {{ m }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+
+      <form action="/upload" method="post" enctype="multipart/form-data" id="upload-form">
+
+        <label class="dropzone" id="dropzone">
+          <input type="file" name="file" id="file-input" accept=".xlsx,.xls" required>
+
+          <span id="dropzone-text">
+            Drag &amp; drop your .xlsx file here, or click to browse
+          </span>
+        </label>
+
+        <button type="submit" class="btn-primary" id="analyze-btn">
+          <span id="btn-text">
+            Analyze File
+          </span>
+
+          <span id="btn-loading" style="display: none;">
+            ⏳ Analyzing...
+          </span>
+        </button>
+
+      </form>
+
+      <div class="hint">
+        <strong>Expected columns:</strong>
+        Period (YYYYMM), Region, Product ID, Customer ID,
+        Sales&nbsp;$ / Forecast&nbsp;$
+      </div>
+
+    </div>
+    ```
+
+  </div>
+
+  <script>
+    const input = document.getElementById("file-input");
+    const dzText = document.getElementById("dropzone-text");
+    const dropzone = document.getElementById("dropzone");
+
+    const form = document.getElementById("upload-form");
+    const analyzeBtn = document.getElementById("analyze-btn");
+    const btnText = document.getElementById("btn-text");
+    const btnLoading = document.getElementById("btn-loading");
+
+
+    // ----------------------------------------
+    // File selection
+    // ----------------------------------------
+
+    input.addEventListener("change", () => {
+      if (input.files.length > 0) {
+        dzText.textContent = input.files[0].name;
+      }
+    });
+
+
+    // ----------------------------------------
+    // Drag & drop
+    // ----------------------------------------
+
+    ["dragover", "dragleave", "drop"].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+      });
+    });
+
+
+    dropzone.addEventListener("dragover", () => {
+      dropzone.classList.add("drag");
+    });
+
+
+    dropzone.addEventListener("dragleave", () => {
+      dropzone.classList.remove("drag");
+    });
+
+
+    dropzone.addEventListener("drop", event => {
+      dropzone.classList.remove("drag");
+
+      const files = event.dataTransfer.files;
+
+      if (files.length > 0) {
+        input.files = files;
+        dzText.textContent = files[0].name;
+      }
+    });
+
+
+    // ----------------------------------------
+    // Submit / loading state
+    // ----------------------------------------
+
+    form.addEventListener("submit", () => {
+
+      // Prevent multiple submissions.
+      analyzeBtn.disabled = true;
+
+      // Change button text.
+      btnText.style.display = "none";
+      btnLoading.style.display = "inline";
+
+      // Change dropzone appearance.
+      dropzone.style.pointerEvents = "none";
+      dropzone.style.opacity = "0.6";
+    });
+  </script>
+
+</body>
+
+</html>
